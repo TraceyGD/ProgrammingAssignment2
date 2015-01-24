@@ -1,15 +1,42 @@
-## Put comments here that give an overall description of what your
-## functions do
+## These 2 functions demonstrate how to nest functions in R, to create
+## an object, an (assumed square) invertible matrix to cache/store 
+## its inverse.This should avoid repetitious computation.
 
-## Write a short comment describing this function
+## The makeCacheMatrix function returns a list containing the function 
+## to set the value of the matrix, get the value of the matrix, 
+## set the value of the inverse, get the value of the inverse.
 
 makeCacheMatrix <- function(x = matrix()) {
-
+        s <- NULL
+        set<- function(y) {
+                x<<- y
+                s<<- NULL
+        }
+        get <- function() x
+        setsolve <- function(solve) s <<- solve
+        getsolve <- function() s
+        list(set = set, get = get,
+             setsolve = setsolve,
+             getsolve = getsolve)
 }
 
+## Input to the cacheSolve function is from the function list 
+## which has been created,defined and returned by makeCacheMatrix 
+## function above.
 
-## Write a short comment describing this function
+## The cacheSolve function gets and returns the cached inverse of 
+## the matrix x.
+## Otherwise, if the matrix has been changed,it recomputes and 
+## returns a matrix that is the inverse of x
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+        s <- x$getsolve()
+        if(!is.null(s)) { 
+                message("getting cached inverse")
+                return(s)
+        }
+        data <- x$get()
+        s <- solve(data, ...)
+        x$setsolve(s)
+        return(s)
 }
